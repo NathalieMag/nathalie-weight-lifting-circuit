@@ -68,6 +68,7 @@ input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;
 <section id="authSection" class="card" style="max-width:520px;margin:22px auto">
   <h2>Sign in</h2>
   <p>Create or use your email/password account so your weights and logs sync across phone and desktop.</p>
+  <p style="font-size:10px;color:var(--muted);">build: reps-and-6color-v1</p>
   <input id="email" type="email" placeholder="Email" autocapitalize="off" autocorrect="off" spellcheck="false"><br><br>
   <input id="password" type="password" placeholder="Password" autocapitalize="off" autocorrect="off" spellcheck="false"><br><br>
   <button class="primary" id="signInBtn">Sign in</button>
@@ -350,9 +351,9 @@ $("signUpBtn").onclick = async () => { try { $("authStatus").textContent = "Crea
 $("signOutBtn").onclick = () => signOut(auth);
 $("forgotBtn").onclick = async () => {
   let email = $("email").value;
-  if (!email) { $("authStatus").textContent = "Enter your email above first, then tap Forgot password."; return; }
-  try { await sendPasswordResetEmail(auth,email); $("authStatus").textContent = "Password reset email sent, check your inbox."; }
-  catch(e) { $("authStatus").textContent = e.message; }
+  if (!email) { alert("Enter your email in the field above first, then tap Forgot password."); return; }
+  try { await sendPasswordResetEmail(auth,email); alert("Password reset email sent to " + email + ". Check your inbox (and spam folder)."); }
+  catch(e) { alert("Error: " + e.message); }
 };
 onAuthStateChanged(auth, async user => {
   if (user) {
