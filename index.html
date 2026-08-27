@@ -3,45 +3,56 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lift Circuit">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&display=swap" rel="stylesheet">
 <title>Nathalie's Personal Weight Lifting Circuit</title>
 <style>
 :root {
-  --bg:#fff7f2; --card:#ffffff; --text:#6b4f45; --muted:#9a8176; --border:#eadbd1;
-  --upper:#6f91aa; --lower:#7f9e86; --core:#d99076; --accent:#8a6658; --soft:#fff0e9;
-  --shadow:0 12px 30px rgba(107,79,69,.08);
+  --bg:#fbf7fa; --card:#ffffff; --text:#55495e; --muted:#a99bb0; --border:#ecebf0;
+  --legs:#cdbceb; --glutes:#dcaad9; --back:#f0b4cf; --chest:#f2919c; --shoulders:#ec7f6c; --core:#b8624a;
+  --accent:#e05a4e; --soft:#faf1f6;
+  --shadow:0 12px 30px rgba(150,130,160,.10);
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#fffdfb);color:var(--text)}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#faf9fc);color:var(--text)}
 header,main{max-width:1180px;margin:auto;padding:24px 18px}
-h1{margin:0;font-size:32px;letter-spacing:-.03em} h2{margin:0 0 8px} p{color:var(--muted);line-height:1.4}
+h1{margin:0;font-size:34px;letter-spacing:-.02em;font-family:"Fraunces",Georgia,serif;font-weight:600} h2{margin:0 0 8px} p{color:var(--muted);line-height:1.4}
 .hidden{display:none!important}
 .card{background:rgba(255,255,255,.9);border:1px solid var(--border);border-radius:24px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
 button{border:1px solid var(--border);background:var(--card);color:var(--text);padding:10px 14px;border-radius:999px;font-weight:750;cursor:pointer}
 button.primary,button.active{background:var(--accent);color:white;border-color:var(--accent)}
 button.small{padding:7px 10px;font-size:12px}
-input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;background:#fffdfb;color:var(--text);font-size:15px}
+input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;background:#faf9fc;color:var(--text);font-size:15px}
 .tabs,.round-nav,.round-actions,.tile-actions,.cardio-controls,.hi-checks{display:flex;gap:8px;flex-wrap:wrap}
 .layout{display:grid;grid-template-columns:1fr 350px;gap:16px;align-items:start}
 .exercise-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
 .tile{position:relative;background:white;border:1px solid var(--border);border-radius:20px;padding:14px;min-height:200px;box-shadow:var(--shadow);overflow:hidden}
-.tile:before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--upper)}
-.tile.lower:before{background:var(--lower)} .tile.core:before{background:var(--core)}
-.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase;background:#e5eef5;color:var(--upper)}
-.badge.lower{background:#e9f2eb;color:var(--lower)} .badge.core{background:#fae5dc;color:var(--core)}
+.tile:before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--legs)}
+.tile.glutes:before{background:var(--glutes)} .tile.back:before{background:var(--back)} .tile.chest:before{background:var(--chest)} .tile.shoulders:before{background:var(--shoulders)} .tile.core:before{background:var(--core)}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase;background:#f0ecf9;color:var(--legs)}
+.badge.glutes{background:#f9ecf8;color:var(--glutes)} .badge.back{background:#fdecf1;color:var(--back)} .badge.chest{background:#fce7e9;color:var(--chest)} .badge.shoulders{background:#fbe6e1;color:var(--shoulders)} .badge.core{background:#f3e1da;color:var(--core)}
 .tile-head,.hero,.sheet-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
 .muscle,.note,.status{color:var(--muted);font-size:12px;font-weight:700}
 .current-exercise{font-size:18px;font-weight:850;margin:12px 0;line-height:1.15}
-.done{background:var(--lower)!important;color:white!important;border-color:var(--lower)!important}
-.round-pill.complete{background:#e9f2eb;color:var(--lower)}
-.bar{height:9px;border-radius:999px;background:#f0e4dd;overflow:hidden}
-.fill{height:100%;border-radius:999px;background:var(--upper);transition:.2s} .fill.lower{background:var(--lower)} .fill.core{background:var(--core)}
+.done{background:var(--accent)!important;color:white!important;border-color:var(--accent)!important}
+.round-pill.complete{background:#fbe4de;color:var(--accent)}
+.bar{height:9px;border-radius:999px;background:#f1ecf5;overflow:hidden}
+.fill{height:100%;border-radius:999px;background:var(--legs);transition:.2s}
+.fill.glutes{background:var(--glutes)} .fill.back{background:var(--back)} .fill.chest{background:var(--chest)} .fill.shoulders{background:var(--shoulders)} .fill.core{background:var(--core)}
 .volume-row{display:grid;grid-template-columns:106px 1fr 44px;gap:9px;align-items:center;font-size:13px;font-weight:800;margin:10px 0}
-.modal{position:fixed;inset:0;background:rgba(68,48,40,.32);display:none;align-items:flex-end;justify-content:center;padding:14px;z-index:50}
+.input-row{display:flex;gap:8px;margin-top:8px}
+.input-row input{width:auto;flex:1}
+.modal{position:fixed;inset:0;background:rgba(50,42,60,.35);display:none;align-items:flex-end;justify-content:center;padding:14px;z-index:50}
 .modal.open{display:flex}
-.sheet{width:min(760px,100%);max-height:86vh;overflow:auto;background:var(--bg);border-radius:28px 28px 18px 18px;padding:18px;box-shadow:0 25px 80px rgba(68,48,40,.24)}
+.sheet{width:min(760px,100%);max-height:86vh;overflow:auto;background:var(--bg);border-radius:28px 28px 18px 18px;padding:18px;box-shadow:0 25px 80px rgba(50,42,60,.24)}
 .option{width:100%;margin:5px 0;border-radius:16px;text-align:left;display:flex;justify-content:space-between;align-items:center;white-space:normal}
 .link-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:10px}
-.video-link{display:block;text-decoration:none;color:var(--text);background:#fffdfb;border:1px solid var(--border);border-radius:16px;padding:12px;font-weight:800}
+.video-link{display:block;text-decoration:none;color:var(--text);background:#faf9fc;border:1px solid var(--border);border-radius:16px;padding:12px;font-weight:800}
 .video-link span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
 .hi-check{flex:1} .log-item{border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.exercise-grid{grid-template-columns:repeat(2,1fr)}}
@@ -57,11 +68,12 @@ input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;
 <section id="authSection" class="card" style="max-width:520px;margin:22px auto">
   <h2>Sign in</h2>
   <p>Create or use your email/password account so your weights and logs sync across phone and desktop.</p>
-  <input id="email" type="email" placeholder="Email"><br><br>
-  <input id="password" type="password" placeholder="Password"><br><br>
+  <input id="email" type="email" placeholder="Email" autocapitalize="off" autocorrect="off" spellcheck="false"><br><br>
+  <input id="password" type="password" placeholder="Password" autocapitalize="off" autocorrect="off" spellcheck="false"><br><br>
   <button class="primary" id="signInBtn">Sign in</button>
   <button id="signUpBtn">Create account</button>
   <div id="authStatus" class="status"></div>
+  <p><button class="small" id="forgotBtn" style="margin-top:6px;">Forgot password?</button></p>
 </section>
 
 <section id="appSection" class="hidden">
@@ -154,11 +166,11 @@ input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import { getFirestore,doc,getDoc,setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {"apiKey": "AIzaSyB0RDeHE4jujJF-3FYwdE4M09A6N0ckUHA", "authDomain": "weight-lifting-circuit.firebaseapp.com", "projectId": "weight-lifting-circuit", "storageBucket": "weight-lifting-circuit.firebasestorage.app", "messagingSenderId": "578719154553", "appId": "1:578719154553:web:0ace3ce94e7101e705efa8"};
-const DEFAULT = {"version": "2.0", "targetSets": 6, "lowCardioTarget": 120, "exercisesByMuscle": {"Quads": ["Quad Sit Back", "Heel Elevated Squat", "Ball Wall Sit", "Sissy Squat", "Banded Supine Knee Extension", "Bulgarian Sissy Squat", "Matrix", "Plie Sissy Squat", "Sissy B Stance Lunge", "Sissy Lunge", "Sissy Stool Lunge", "Sissy Wall Sit", "Sumo Ball Wall Sit", "Wall Sit"], "Chest": ["Chest Press", "Pushups", "Single Arm Chest Press", "Ball Chest Press", "Banded Chest Press", "Chest Fly", "Elevated Chest Press", "Incline Chest Press", "Single Arm Chest Fly", "Side-Lying Pushup"], "Shoulders": ["Narrow Press", "Shoulder Abduction", "Deltoid Row", "Kickstand Abduction", "Kickstand Deltoid Row", "Side-Lying Press", "Supine Bent Arm Raise", "Supine Straight Arm Raise", "Banded Shoulder Abduction"], "Hamstrings": ["Kneeling on Stool Hamstring Curl", "Hamstring Curl", "Kneeling Hamstring Curl", "Prone Hamstring Curl", "Hamstring Bridge", "Banded Hamstring Glider Bridge", "Chair Hamstring Bridge", "Glider Bridge", "Hamstring Hip Thrust", "Single Leg Hamstring Hip Thrust", "Stool Hamstring Bridge"], "Back": ["Kickstand Row", "Narrow Kickstand Row", "Alternating Kneeling Row", "Kickstand Reverse Fly", "Propped Row", "Quadruped Row", "Side-Lying Reverse Fly", "Side-Lying Row"], "Triceps": ["Skull Crusher", "Narrow Press", "Single Arm Narrow Press", "Narrow Push Up", "Tipping Narrow Push Up"], "Biceps": ["Bicep Curl", "Hammer Curl", "Supinated Bicep Curl", "Biceps Row", "Quadruped Bicep Curl", "Single Arm Bicep Curl", "Single Arm Hammer Curl", "Single Arm Preacher Curl"], "Glutes": ["Frog Pump", "Bent Knee Hip Abduction", "Bridges", "B Stance Lunge", "B Stance Lunge w/ Internal Rotation", "Bulgarian Split Squat", "Chair Supported Glider Lunge", "Chair Supported Lunge", "Clam Shell", "Clam Shell Plus", "Double Clamshell", "Deficit Lunges", "Elevated Half Deadlift", "Glider Deficit Lunges", "Glider Lunges", "Glider Side Lunge"], "Core": ["Ball Crunch", "Side Plank", "Plank", "Dead Bug", "Bird Dog", "Heel Taps", "Reverse Crunch", "Standing March"]}, "groupType": {"Quads": "Lower Body", "Glutes": "Lower Body", "Hamstrings": "Lower Body", "Chest": "Upper Body", "Back": "Upper Body", "Shoulders": "Upper Body", "Biceps": "Upper Body", "Triceps": "Upper Body", "Core": "Core"}, "lastWeights": {"Quad Sit Back": "35", "Narrow Press": "15", "Chest Press": "20", "Kneeling on Stool Hamstring Curl": "35", "Hamstring Curl": "35", "Kneeling Hamstring Curl": "35", "Prone Hamstring Curl": "35", "Skull Crusher": "12", "Kickstand Row": "20", "Narrow Kickstand Row": "20", "Bent Knee Hip Abduction": "35", "Heel Elevated Squat": "20", "Side Plank": "12", "Ball Crunch": "8", "Supinated Bicep Curl": "12", "Bicep Curl": "12"}, "logs": [], "workouts": [{"id": "day1", "name": "Day 1 / Monday", "rounds": 3, "slots": [{"muscle": "Quads", "rounds": [{"exercise": "Quad Sit Back", "done": false}, {"exercise": "Quad Sit Back", "done": false}, {"exercise": "Quad Sit Back", "done": false}]}, {"muscle": "Shoulders", "rounds": [{"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}]}, {"muscle": "Chest", "rounds": [{"exercise": "Chest Press", "done": false}, {"exercise": "Chest Press", "done": false}, {"exercise": "Chest Press", "done": false}]}, {"muscle": "Hamstrings", "rounds": [{"exercise": "Kneeling on Stool Hamstring Curl", "done": false}, {"exercise": "Kneeling on Stool Hamstring Curl", "done": false}, {"exercise": "Kneeling on Stool Hamstring Curl", "done": false}]}, {"muscle": "Triceps", "rounds": [{"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}]}, {"muscle": "Back", "rounds": [{"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}]}]}, {"id": "day2", "name": "Day 2 / Wednesday", "rounds": 3, "slots": [{"muscle": "Biceps", "rounds": [{"exercise": "Hammer Curl", "done": false}, {"exercise": "Hammer Curl", "done": false}, {"exercise": "Hammer Curl", "done": false}]}, {"muscle": "Glutes", "rounds": [{"exercise": "Bent Knee Hip Abduction", "done": false}, {"exercise": "Bent Knee Hip Abduction", "done": false}, {"exercise": "Bent Knee Hip Abduction", "done": false}]}, {"muscle": "Back", "rounds": [{"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}]}, {"muscle": "Quads", "rounds": [{"exercise": "Heel Elevated Squat", "done": false}, {"exercise": "Heel Elevated Squat", "done": false}, {"exercise": "Heel Elevated Squat", "done": false}]}, {"muscle": "Triceps", "rounds": [{"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}]}, {"muscle": "Core", "rounds": [{"exercise": "Side Plank", "done": false}, {"exercise": "Side Plank", "done": false}, {"exercise": "Side Plank", "done": false}]}]}, {"id": "day3", "name": "Day 3 / Friday", "rounds": 3, "slots": [{"muscle": "Biceps", "rounds": [{"exercise": "Bicep Curl", "done": false}, {"exercise": "Bicep Curl", "done": false}, {"exercise": "Bicep Curl", "done": false}]}, {"muscle": "Glutes", "rounds": [{"exercise": "Frog Pump", "done": false}, {"exercise": "Frog Pump", "done": false}, {"exercise": "Frog Pump", "done": false}]}, {"muscle": "Core", "rounds": [{"exercise": "Ball Crunch", "done": false}, {"exercise": "Ball Crunch", "done": false}, {"exercise": "Ball Crunch", "done": false}]}, {"muscle": "Hamstrings", "rounds": [{"exercise": "Hamstring Bridge", "done": false}, {"exercise": "Hamstring Bridge", "done": false}, {"exercise": "Hamstring Bridge", "done": false}]}, {"muscle": "Shoulders", "rounds": [{"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}]}, {"muscle": "Chest", "rounds": [{"exercise": "Pushups", "done": false}, {"exercise": "Pushups", "done": false}, {"exercise": "Pushups", "done": false}]}]}]};
+const DEFAULT = {"version": "2.0", "targetSets": 6, "lowCardioTarget": 120, "exercisesByMuscle": {"Quads": ["Quad Sit Back", "Heel Elevated Squat", "Ball Wall Sit", "Sissy Squat", "Banded Supine Knee Extension", "Bulgarian Sissy Squat", "Matrix", "Plie Sissy Squat", "Sissy B Stance Lunge", "Sissy Lunge", "Sissy Stool Lunge", "Sissy Wall Sit", "Sumo Ball Wall Sit", "Wall Sit"], "Chest": ["Chest Press", "Pushups", "Single Arm Chest Press", "Ball Chest Press", "Banded Chest Press", "Chest Fly", "Elevated Chest Press", "Incline Chest Press", "Single Arm Chest Fly", "Side-Lying Pushup"], "Shoulders": ["Narrow Press", "Shoulder Abduction", "Deltoid Row", "Kickstand Abduction", "Kickstand Deltoid Row", "Side-Lying Press", "Supine Bent Arm Raise", "Supine Straight Arm Raise", "Banded Shoulder Abduction"], "Hamstrings": ["Kneeling on Stool Hamstring Curl", "Hamstring Curl", "Kneeling Hamstring Curl", "Prone Hamstring Curl", "Hamstring Bridge", "Banded Hamstring Glider Bridge", "Chair Hamstring Bridge", "Glider Bridge", "Hamstring Hip Thrust", "Single Leg Hamstring Hip Thrust", "Stool Hamstring Bridge"], "Back": ["Kickstand Row", "Narrow Kickstand Row", "Alternating Kneeling Row", "Kickstand Reverse Fly", "Propped Row", "Quadruped Row", "Side-Lying Reverse Fly", "Side-Lying Row"], "Triceps": ["Skull Crusher", "Narrow Press", "Single Arm Narrow Press", "Narrow Push Up", "Tipping Narrow Push Up"], "Biceps": ["Bicep Curl", "Hammer Curl", "Supinated Bicep Curl", "Biceps Row", "Quadruped Bicep Curl", "Single Arm Bicep Curl", "Single Arm Hammer Curl", "Single Arm Preacher Curl"], "Glutes": ["Frog Pump", "Bent Knee Hip Abduction", "Bridges", "B Stance Lunge", "B Stance Lunge w/ Internal Rotation", "Bulgarian Split Squat", "Chair Supported Glider Lunge", "Chair Supported Lunge", "Clam Shell", "Clam Shell Plus", "Double Clamshell", "Deficit Lunges", "Elevated Half Deadlift", "Glider Deficit Lunges", "Glider Lunges", "Glider Side Lunge"], "Core": ["Ball Crunch", "Side Plank", "Plank", "Dead Bug", "Bird Dog", "Heel Taps", "Reverse Crunch", "Standing March"]}, "groupType": {"Quads": "Legs", "Hamstrings": "Legs", "Glutes": "Glutes", "Back": "Back", "Chest": "Chest", "Shoulders": "Shoulders & Arms", "Biceps": "Shoulders & Arms", "Triceps": "Shoulders & Arms", "Core": "Core"}, "lastWeights": {"Quad Sit Back": "35", "Narrow Press": "15", "Chest Press": "20", "Kneeling on Stool Hamstring Curl": "35", "Hamstring Curl": "35", "Kneeling Hamstring Curl": "35", "Prone Hamstring Curl": "35", "Skull Crusher": "12", "Kickstand Row": "20", "Narrow Kickstand Row": "20", "Bent Knee Hip Abduction": "35", "Heel Elevated Squat": "20", "Side Plank": "12", "Ball Crunch": "8", "Supinated Bicep Curl": "12", "Bicep Curl": "12"}, "logs": [], "workouts": [{"id": "day1", "name": "Day 1 / Monday", "rounds": 3, "slots": [{"muscle": "Quads", "rounds": [{"exercise": "Quad Sit Back", "done": false}, {"exercise": "Quad Sit Back", "done": false}, {"exercise": "Quad Sit Back", "done": false}]}, {"muscle": "Shoulders", "rounds": [{"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}]}, {"muscle": "Chest", "rounds": [{"exercise": "Chest Press", "done": false}, {"exercise": "Chest Press", "done": false}, {"exercise": "Chest Press", "done": false}]}, {"muscle": "Hamstrings", "rounds": [{"exercise": "Kneeling on Stool Hamstring Curl", "done": false}, {"exercise": "Kneeling on Stool Hamstring Curl", "done": false}, {"exercise": "Kneeling on Stool Hamstring Curl", "done": false}]}, {"muscle": "Triceps", "rounds": [{"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}]}, {"muscle": "Back", "rounds": [{"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}]}]}, {"id": "day2", "name": "Day 2 / Wednesday", "rounds": 3, "slots": [{"muscle": "Biceps", "rounds": [{"exercise": "Hammer Curl", "done": false}, {"exercise": "Hammer Curl", "done": false}, {"exercise": "Hammer Curl", "done": false}]}, {"muscle": "Glutes", "rounds": [{"exercise": "Bent Knee Hip Abduction", "done": false}, {"exercise": "Bent Knee Hip Abduction", "done": false}, {"exercise": "Bent Knee Hip Abduction", "done": false}]}, {"muscle": "Back", "rounds": [{"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}]}, {"muscle": "Quads", "rounds": [{"exercise": "Heel Elevated Squat", "done": false}, {"exercise": "Heel Elevated Squat", "done": false}, {"exercise": "Heel Elevated Squat", "done": false}]}, {"muscle": "Triceps", "rounds": [{"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}]}, {"muscle": "Core", "rounds": [{"exercise": "Side Plank", "done": false}, {"exercise": "Side Plank", "done": false}, {"exercise": "Side Plank", "done": false}]}]}, {"id": "day3", "name": "Day 3 / Friday", "rounds": 3, "slots": [{"muscle": "Biceps", "rounds": [{"exercise": "Bicep Curl", "done": false}, {"exercise": "Bicep Curl", "done": false}, {"exercise": "Bicep Curl", "done": false}]}, {"muscle": "Glutes", "rounds": [{"exercise": "Frog Pump", "done": false}, {"exercise": "Frog Pump", "done": false}, {"exercise": "Frog Pump", "done": false}]}, {"muscle": "Core", "rounds": [{"exercise": "Ball Crunch", "done": false}, {"exercise": "Ball Crunch", "done": false}, {"exercise": "Ball Crunch", "done": false}]}, {"muscle": "Hamstrings", "rounds": [{"exercise": "Hamstring Bridge", "done": false}, {"exercise": "Hamstring Bridge", "done": false}, {"exercise": "Hamstring Bridge", "done": false}]}, {"muscle": "Shoulders", "rounds": [{"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}]}, {"muscle": "Chest", "rounds": [{"exercise": "Pushups", "done": false}, {"exercise": "Pushups", "done": false}, {"exercise": "Pushups", "done": false}]}]}]};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -203,6 +215,7 @@ async function load() {
     data.targetSets = DEFAULT.targetSets;
     data.lowCardioTarget = DEFAULT.lowCardioTarget;
     data.lastWeights = {...DEFAULT.lastWeights, ...(data.lastWeights || {})};
+    data.lastReps = {...(DEFAULT.lastReps || {}), ...(data.lastReps || {})};
   } else {
     data = structuredClone(DEFAULT);
     await setDoc(ref,data);
@@ -220,9 +233,10 @@ function save() {
   }, 250);
 }
 function day() { return data.workouts.find(w => w.id === currentDayId) || data.workouts[0]; }
-function type(m) { return data.groupType[m] || "Upper Body"; }
-function cls(m) { return type(m)==="Lower Body" ? "lower" : type(m)==="Core" ? "core" : "upper"; }
+function type(m) { return data.groupType[m] || "Legs"; }
+function cls(m) { let t = type(m); return t==="Legs"?"legs":t==="Glutes"?"glutes":t==="Back"?"back":t==="Chest"?"chest":t==="Shoulders & Arms"?"shoulders":"core"; }
 function wt(e) { return (data.lastWeights || {})[e] || ""; }
+function reps(e) { return (data.lastReps || {})[e] || ""; }
 function ckey(d,s,r) { return `${d}|${s}|${r}`; }
 function roundComplete(d,r) { return d.slots.every(s => s.rounds[r].done); }
 
@@ -244,11 +258,15 @@ function renderWorkout() {
     return `<article class="tile ${k}">
       <div class="tile-head"><div><span class="badge ${k}">${type(s.muscle)}</span><div class="muscle">${s.muscle} · Round ${selectedRound+1}</div></div><button class="small" data-swap="${i}">Swap</button></div>
       <div class="current-exercise">${r.exercise}</div>
-      <input value="${wt(r.exercise)}" placeholder="${r.exercise==='Pushups'?'Reps or incline note':'Weight lbs'}" data-weight="${r.exercise}">
+      <div class="input-row">
+        <input value="${wt(r.exercise)}" placeholder="Weight lbs" data-weight="${r.exercise}">
+        <input value="${reps(r.exercise)}" placeholder="Reps" inputmode="numeric" data-reps="${r.exercise}">
+      </div>
       <div class="tile-actions"><button class="small ${r.done?'done':''}" data-done="${i}">${r.done?'Done ✓':'Done'}</button></div>
     </article>`;
   }).join("");
   document.querySelectorAll("[data-weight]").forEach(x => x.onchange = () => { data.lastWeights = data.lastWeights || {}; data.lastWeights[x.dataset.weight] = x.value; save(); renderOptions(); });
+  document.querySelectorAll("[data-reps]").forEach(x => x.onchange = () => { data.lastReps = data.lastReps || {}; data.lastReps[x.dataset.reps] = x.value; save(); renderOptions(); });
   document.querySelectorAll("[data-done]").forEach(b => b.onclick = () => toggleDone(Number(b.dataset.done)));
   document.querySelectorAll("[data-swap]").forEach(b => b.onclick = () => openSwap(Number(b.dataset.swap)));
 }
@@ -285,7 +303,7 @@ window.closeSwap = () => { $("modal").classList.remove("open"); swap = null; };
 function renderOptions() {
   if (!swap) return;
   let s = day().slots[swap.i], cur = s.rounds[selectedRound].exercise;
-  $("options").innerHTML = (data.exercisesByMuscle[s.muscle] || []).map(n => `<button class="option ${n===cur?'active':''}" data-choose="${n}"><span>${n}<br><span class="note">${wt(n)?'Last: '+wt(n):'No weight saved yet'}</span></span><span>${n===cur?'Current':'Choose'}</span></button>`).join("");
+  $("options").innerHTML = (data.exercisesByMuscle[s.muscle] || []).map(n => { let lw = wt(n), lr = reps(n), last = lw && lr ? `Last: ${lw}lbs x${lr}` : lw ? `Last: ${lw}lbs` : lr ? `Last: x${lr}` : "No weight saved yet"; return `<button class="option ${n===cur?'active':''}" data-choose="${n}"><span>${n}<br><span class="note">${last}</span></span><span>${n===cur?'Current':'Choose'}</span></button>`; }).join("");
   document.querySelectorAll("[data-choose]").forEach(b => b.onclick = () => { day().slots[swap.i].rounds[selectedRound].exercise = b.dataset.choose; save(); window.closeSwap(); render(); });
 }
 function renderVolume() {
@@ -314,7 +332,7 @@ function renderCardio() {
 window.logWorkout = () => {
   let d = day();
   data.logs = data.logs || [];
-  data.logs.unshift({date:new Date().toLocaleDateString(),workout:d.name,items:d.slots.map(s => `${s.muscle}: ` + s.rounds.map((r,i) => `R${i+1}: ${r.exercise}${r.done?' ✓':''}${wt(r.exercise)?' '+wt(r.exercise):''}`).join(", "))});
+  data.logs.unshift({date:new Date().toLocaleDateString(),workout:d.name,items:d.slots.map(s => `${s.muscle}: ` + s.rounds.map((r,i) => `R${i+1}: ${r.exercise}${r.done?' ✓':''}${wt(r.exercise)?' '+wt(r.exercise)+'lbs':''}${reps(r.exercise)?' x'+reps(r.exercise):''}`).join(", "))});
   data.logs = data.logs.slice(0,50);
   save(); renderLog(); alert("Workout logged!");
 };
@@ -330,6 +348,12 @@ window.clearChecks = () => {
 $("signInBtn").onclick = async () => { try { $("authStatus").textContent = "Signing in..."; await signInWithEmailAndPassword(auth,$("email").value,$("password").value); } catch(e) { $("authStatus").textContent = e.message; } };
 $("signUpBtn").onclick = async () => { try { $("authStatus").textContent = "Creating account..."; await createUserWithEmailAndPassword(auth,$("email").value,$("password").value); } catch(e) { $("authStatus").textContent = e.message; } };
 $("signOutBtn").onclick = () => signOut(auth);
+$("forgotBtn").onclick = async () => {
+  let email = $("email").value;
+  if (!email) { $("authStatus").textContent = "Enter your email above first, then tap Forgot password."; return; }
+  try { await sendPasswordResetEmail(auth,email); $("authStatus").textContent = "Password reset email sent, check your inbox."; }
+  catch(e) { $("authStatus").textContent = e.message; }
+};
 onAuthStateChanged(auth, async user => {
   if (user) {
     uid = user.uid;
