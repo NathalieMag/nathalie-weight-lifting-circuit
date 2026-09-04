@@ -46,7 +46,7 @@ input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;
 .fill.glutes{background:var(--glutes)} .fill.back{background:var(--back)} .fill.chest{background:var(--chest)} .fill.shoulders{background:var(--shoulders)} .fill.core{background:var(--core)}
 .volume-row{display:grid;grid-template-columns:106px 1fr 44px;gap:9px;align-items:center;font-size:13px;font-weight:800;margin:10px 0}
 .input-row{display:flex;gap:8px;margin-top:8px}
-.input-row input{width:auto;flex:1}
+.input-row input{width:auto;flex:1;min-width:0}
 .modal{position:fixed;inset:0;background:rgba(50,42,60,.35);display:none;align-items:flex-end;justify-content:center;padding:14px;z-index:50}
 .modal.open{display:flex}
 .sheet{width:min(760px,100%);max-height:86vh;overflow:auto;background:var(--bg);border-radius:28px 28px 18px 18px;padding:18px;box-shadow:0 25px 80px rgba(50,42,60,.24)}
@@ -55,6 +55,8 @@ input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;
 .video-link{display:block;text-decoration:none;color:var(--text);background:#faf9fc;border:1px solid var(--border);border-radius:16px;padding:12px;font-weight:800}
 .video-link span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
 .hi-check{flex:1} .log-item{border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
+.drag-handle{cursor:grab;color:var(--muted);font-size:16px;padding:2px 6px;touch-action:none;user-select:none}
+.tile.sortable-ghost{opacity:.35} .tile.sortable-chosen{box-shadow:0 18px 40px rgba(150,130,160,.22)}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.exercise-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){header,main{padding:18px 12px}.exercise-grid{grid-template-columns:1fr}h1{font-size:28px}}
 </style>
@@ -78,6 +80,7 @@ input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;
 </section>
 
 <section id="appSection" class="hidden">
+  <div class="tabs" id="modeToggle" style="margin-bottom:10px"></div>
   <div class="tabs" id="tabs"></div>
   <div class="layout">
     <section>
@@ -85,6 +88,7 @@ input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;
         <div class="hero">
           <div>
             <h2 id="dayTitle"></h2>
+            <p id="dayCategory" class="note hidden" style="margin:2px 0 4px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--accent)"></p>
             <p id="dayMeta"></p>
           </div>
           <button class="small" id="signOutBtn">Sign out</button>
@@ -102,6 +106,15 @@ input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;
         <div class="link-grid">
           <a class="video-link" target="_blank" href="https://youtu.be/PwvCz1qe2ac">Your warm-up video <span>Max 5 min</span></a>
         </div>
+        <ol style="margin:12px 0 0;padding-left:18px;color:var(--text);font-size:14px;line-height:1.6">
+          <li>60–90 sec: jumping jacks or high knees</li>
+          <li>30 sec: arm circles + shoulder rolls</li>
+          <li>30 sec: bodyweight squats</li>
+          <li>30 sec: walking lunges or leg swings</li>
+          <li>30 sec: cat-cow or a few scap pushups</li>
+          <li>1–2 light warm-up sets on your first exercise (30–40% of working weight) before going to failure</li>
+        </ol>
+        <p class="note" style="margin-top:8px">Glute days (Wed &amp; Fri): add 20–30 sec of glute bridges or monster walks.</p>
       </details>
 
       <div class="exercise-grid" id="exerciseGrid"></div>
@@ -111,6 +124,15 @@ input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;
         <div class="link-grid">
           <a class="video-link" target="_blank" href="https://youtu.be/_TpB3udkL20">Your cool-down video <span>Max 5 min</span></a>
         </div>
+        <p class="note" style="margin-top:12px">Pick 5–6, 30–45 sec each, based on what you hit that day:</p>
+        <ul style="margin:6px 0 0;padding-left:18px;color:var(--text);font-size:14px;line-height:1.6">
+          <li>Quad stretch (standing, pull heel to glute) &mdash; all days</li>
+          <li>Hamstring stretch (seated forward fold) &mdash; all days</li>
+          <li>Floor T-stretch or supine twist &mdash; press/chest days</li>
+          <li>Overhead triceps stretch &mdash; skull crusher/curl days</li>
+          <li>Figure-4 or pigeon stretch &mdash; glute-heavy days</li>
+          <li>Child's pose or overhead lat reach &mdash; back/row days</li>
+        </ul>
       </details>
 
       <div class="card">
@@ -165,13 +187,14 @@ input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import { getFirestore,doc,getDoc,setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {"apiKey": "AIzaSyB0RDeHE4jujJF-3FYwdE4M09A6N0ckUHA", "authDomain": "weight-lifting-circuit.firebaseapp.com", "projectId": "weight-lifting-circuit", "storageBucket": "weight-lifting-circuit.firebasestorage.app", "messagingSenderId": "578719154553", "appId": "1:578719154553:web:0ace3ce94e7101e705efa8"};
-const DEFAULT = {"version": "2.0", "targetSets": 6, "lowCardioTarget": 120, "exercisesByMuscle": {"Quads": ["Quad Sit Back", "Heel Elevated Squat", "Ball Wall Sit", "Sissy Squat", "Banded Supine Knee Extension", "Bulgarian Sissy Squat", "Matrix", "Plie Sissy Squat", "Sissy B Stance Lunge", "Sissy Lunge", "Sissy Stool Lunge", "Sissy Wall Sit", "Sumo Ball Wall Sit", "Wall Sit"], "Chest": ["Chest Press", "Pushups", "Single Arm Chest Press", "Ball Chest Press", "Banded Chest Press", "Chest Fly", "Elevated Chest Press", "Incline Chest Press", "Single Arm Chest Fly", "Side-Lying Pushup"], "Shoulders": ["Narrow Press", "Shoulder Abduction", "Deltoid Row", "Kickstand Abduction", "Kickstand Deltoid Row", "Side-Lying Press", "Supine Bent Arm Raise", "Supine Straight Arm Raise", "Banded Shoulder Abduction"], "Hamstrings": ["Kneeling on Stool Hamstring Curl", "Hamstring Curl", "Kneeling Hamstring Curl", "Prone Hamstring Curl", "Hamstring Bridge", "Banded Hamstring Glider Bridge", "Chair Hamstring Bridge", "Glider Bridge", "Hamstring Hip Thrust", "Single Leg Hamstring Hip Thrust", "Stool Hamstring Bridge"], "Back": ["Kickstand Row", "Narrow Kickstand Row", "Alternating Kneeling Row", "Kickstand Reverse Fly", "Propped Row", "Quadruped Row", "Side-Lying Reverse Fly", "Side-Lying Row"], "Triceps": ["Skull Crusher", "Narrow Press", "Single Arm Narrow Press", "Narrow Push Up", "Tipping Narrow Push Up"], "Biceps": ["Bicep Curl", "Hammer Curl", "Supinated Bicep Curl", "Biceps Row", "Quadruped Bicep Curl", "Single Arm Bicep Curl", "Single Arm Hammer Curl", "Single Arm Preacher Curl"], "Glutes": ["Frog Pump", "Bent Knee Hip Abduction", "Bridges", "B Stance Lunge", "B Stance Lunge w/ Internal Rotation", "Bulgarian Split Squat", "Chair Supported Glider Lunge", "Chair Supported Lunge", "Clam Shell", "Clam Shell Plus", "Double Clamshell", "Deficit Lunges", "Elevated Half Deadlift", "Glider Deficit Lunges", "Glider Lunges", "Glider Side Lunge"], "Core": ["Ball Crunch", "Side Plank", "Plank", "Dead Bug", "Bird Dog", "Heel Taps", "Reverse Crunch", "Standing March"]}, "groupType": {"Quads": "Legs", "Hamstrings": "Legs", "Glutes": "Glutes", "Back": "Back", "Chest": "Chest", "Shoulders": "Shoulders & Arms", "Biceps": "Shoulders & Arms", "Triceps": "Shoulders & Arms", "Core": "Core"}, "lastWeights": {"Quad Sit Back": "35", "Narrow Press": "15", "Chest Press": "20", "Kneeling on Stool Hamstring Curl": "35", "Hamstring Curl": "35", "Kneeling Hamstring Curl": "35", "Prone Hamstring Curl": "35", "Skull Crusher": "12", "Kickstand Row": "20", "Narrow Kickstand Row": "20", "Bent Knee Hip Abduction": "35", "Heel Elevated Squat": "20", "Side Plank": "12", "Ball Crunch": "8", "Supinated Bicep Curl": "12", "Bicep Curl": "12"}, "logs": [], "workouts": [{"id": "day1", "name": "Day 1 / Monday", "rounds": 3, "slots": [{"muscle": "Quads", "rounds": [{"exercise": "Quad Sit Back", "done": false}, {"exercise": "Quad Sit Back", "done": false}, {"exercise": "Quad Sit Back", "done": false}]}, {"muscle": "Shoulders", "rounds": [{"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}]}, {"muscle": "Chest", "rounds": [{"exercise": "Chest Press", "done": false}, {"exercise": "Chest Press", "done": false}, {"exercise": "Chest Press", "done": false}]}, {"muscle": "Hamstrings", "rounds": [{"exercise": "Kneeling on Stool Hamstring Curl", "done": false}, {"exercise": "Kneeling on Stool Hamstring Curl", "done": false}, {"exercise": "Kneeling on Stool Hamstring Curl", "done": false}]}, {"muscle": "Triceps", "rounds": [{"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}]}, {"muscle": "Back", "rounds": [{"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}]}]}, {"id": "day2", "name": "Day 2 / Wednesday", "rounds": 3, "slots": [{"muscle": "Biceps", "rounds": [{"exercise": "Hammer Curl", "done": false}, {"exercise": "Hammer Curl", "done": false}, {"exercise": "Hammer Curl", "done": false}]}, {"muscle": "Glutes", "rounds": [{"exercise": "Bent Knee Hip Abduction", "done": false}, {"exercise": "Bent Knee Hip Abduction", "done": false}, {"exercise": "Bent Knee Hip Abduction", "done": false}]}, {"muscle": "Back", "rounds": [{"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}]}, {"muscle": "Quads", "rounds": [{"exercise": "Heel Elevated Squat", "done": false}, {"exercise": "Heel Elevated Squat", "done": false}, {"exercise": "Heel Elevated Squat", "done": false}]}, {"muscle": "Triceps", "rounds": [{"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}]}, {"muscle": "Core", "rounds": [{"exercise": "Side Plank", "done": false}, {"exercise": "Side Plank", "done": false}, {"exercise": "Side Plank", "done": false}]}]}, {"id": "day3", "name": "Day 3 / Friday", "rounds": 3, "slots": [{"muscle": "Biceps", "rounds": [{"exercise": "Bicep Curl", "done": false}, {"exercise": "Bicep Curl", "done": false}, {"exercise": "Bicep Curl", "done": false}]}, {"muscle": "Glutes", "rounds": [{"exercise": "Frog Pump", "done": false}, {"exercise": "Frog Pump", "done": false}, {"exercise": "Frog Pump", "done": false}]}, {"muscle": "Core", "rounds": [{"exercise": "Ball Crunch", "done": false}, {"exercise": "Ball Crunch", "done": false}, {"exercise": "Ball Crunch", "done": false}]}, {"muscle": "Hamstrings", "rounds": [{"exercise": "Hamstring Bridge", "done": false}, {"exercise": "Hamstring Bridge", "done": false}, {"exercise": "Hamstring Bridge", "done": false}]}, {"muscle": "Shoulders", "rounds": [{"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}]}, {"muscle": "Chest", "rounds": [{"exercise": "Pushups", "done": false}, {"exercise": "Pushups", "done": false}, {"exercise": "Pushups", "done": false}]}]}]};
+const DEFAULT = {"version": "2.0", "targetSets": 6, "lowCardioTarget": 120, "exercisesByMuscle": {"Quads": ["Quad Sit Back", "Heel Elevated Squat", "Ball Wall Sit", "Sissy Squat", "Banded Supine Knee Extension", "Bulgarian Sissy Squat", "Matrix", "Plie Sissy Squat", "Sissy B Stance Lunge", "Sissy Lunge", "Sissy Stool Lunge", "Sissy Wall Sit", "Sumo Ball Wall Sit", "Wall Sit"], "Chest": ["Chest Press", "Pushups", "Single Arm Chest Press", "Ball Chest Press", "Banded Chest Press", "Chest Fly", "Elevated Chest Press", "Incline Chest Press", "Single Arm Chest Fly", "Side-Lying Pushup"], "Shoulders": ["Narrow Press", "Shoulder Abduction", "Deltoid Row", "Kickstand Abduction", "Kickstand Deltoid Row", "Side-Lying Press", "Supine Bent Arm Raise", "Supine Straight Arm Raise", "Banded Shoulder Abduction"], "Hamstrings": ["Kneeling on Stool Hamstring Curl", "Hamstring Curl", "Kneeling Hamstring Curl", "Prone Hamstring Curl", "Hamstring Bridge", "Banded Hamstring Glider Bridge", "Chair Hamstring Bridge", "Glider Bridge", "Hamstring Hip Thrust", "Single Leg Hamstring Hip Thrust", "Stool Hamstring Bridge"], "Back": ["Kickstand Row", "Narrow Kickstand Row", "Alternating Kneeling Row", "Kickstand Reverse Fly", "Propped Row", "Quadruped Row", "Side-Lying Reverse Fly", "Side-Lying Row"], "Triceps": ["Skull Crusher", "Narrow Press", "Single Arm Narrow Press", "Narrow Push Up", "Tipping Narrow Push Up"], "Biceps": ["Bicep Curl", "Hammer Curl", "Supinated Bicep Curl", "Biceps Row", "Quadruped Bicep Curl", "Single Arm Bicep Curl", "Single Arm Hammer Curl", "Single Arm Preacher Curl"], "Glutes": ["Frog Pump", "Bent Knee Hip Abduction", "Bridges", "B Stance Lunge", "B Stance Lunge w/ Internal Rotation", "Bulgarian Split Squat", "Chair Supported Glider Lunge", "Chair Supported Lunge", "Clam Shell", "Clam Shell Plus", "Double Clamshell", "Deficit Lunges", "Elevated Half Deadlift", "Glider Deficit Lunges", "Glider Lunges", "Glider Side Lunge"], "Core": ["Ball Crunch", "Side Plank", "Plank", "Dead Bug", "Bird Dog", "Heel Taps", "Reverse Crunch", "Standing March"]}, "groupType": {"Quads": "Legs", "Hamstrings": "Legs", "Glutes": "Glutes", "Back": "Back", "Chest": "Chest", "Shoulders": "Shoulders & Arms", "Biceps": "Shoulders & Arms", "Triceps": "Shoulders & Arms", "Core": "Core"}, "lastWeights": {"Quad Sit Back": "35", "Narrow Press": "15", "Chest Press": "20", "Kneeling on Stool Hamstring Curl": "35", "Hamstring Curl": "35", "Kneeling Hamstring Curl": "35", "Prone Hamstring Curl": "35", "Skull Crusher": "12", "Kickstand Row": "20", "Narrow Kickstand Row": "20", "Bent Knee Hip Abduction": "35", "Heel Elevated Squat": "20", "Side Plank": "12", "Ball Crunch": "8", "Supinated Bicep Curl": "12", "Bicep Curl": "12"}, "logs": [], "workouts": [{"id": "day1", "name": "Day 1 / Monday", "rounds": 3, "slots": [{"muscle": "Quads", "rounds": [{"exercise": "Quad Sit Back", "done": false}, {"exercise": "Quad Sit Back", "done": false}, {"exercise": "Quad Sit Back", "done": false}]}, {"muscle": "Shoulders", "rounds": [{"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}]}, {"muscle": "Back", "rounds": [{"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}]}, {"muscle": "Chest", "rounds": [{"exercise": "Chest Press", "done": false}, {"exercise": "Chest Press", "done": false}, {"exercise": "Chest Press", "done": false}]}, {"muscle": "Hamstrings", "rounds": [{"exercise": "Kneeling on Stool Hamstring Curl", "done": false}, {"exercise": "Kneeling on Stool Hamstring Curl", "done": false}, {"exercise": "Kneeling on Stool Hamstring Curl", "done": false}]}, {"muscle": "Triceps", "rounds": [{"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}]}]}, {"id": "day2", "name": "Day 2 / Wednesday", "rounds": 3, "slots": [{"muscle": "Glutes", "rounds": [{"exercise": "Bent Knee Hip Abduction", "done": false}, {"exercise": "Bent Knee Hip Abduction", "done": false}, {"exercise": "Bent Knee Hip Abduction", "done": false}]}, {"muscle": "Quads", "rounds": [{"exercise": "Heel Elevated Squat", "done": false}, {"exercise": "Heel Elevated Squat", "done": false}, {"exercise": "Heel Elevated Squat", "done": false}]}, {"muscle": "Back", "rounds": [{"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}]}, {"muscle": "Biceps", "rounds": [{"exercise": "Hammer Curl", "done": false}, {"exercise": "Hammer Curl", "done": false}, {"exercise": "Hammer Curl", "done": false}]}, {"muscle": "Triceps", "rounds": [{"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}]}, {"muscle": "Core", "rounds": [{"exercise": "Side Plank", "done": false}, {"exercise": "Side Plank", "done": false}, {"exercise": "Side Plank", "done": false}]}]}, {"id": "day3", "name": "Day 3 / Friday", "rounds": 3, "slots": [{"muscle": "Biceps", "rounds": [{"exercise": "Bicep Curl", "done": false}, {"exercise": "Bicep Curl", "done": false}, {"exercise": "Bicep Curl", "done": false}]}, {"muscle": "Shoulders", "rounds": [{"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}]}, {"muscle": "Glutes", "rounds": [{"exercise": "Frog Pump", "done": false}, {"exercise": "Frog Pump", "done": false}, {"exercise": "Frog Pump", "done": false}]}, {"muscle": "Chest", "rounds": [{"exercise": "Pushups", "done": false}, {"exercise": "Pushups", "done": false}, {"exercise": "Pushups", "done": false}]}, {"muscle": "Hamstrings", "rounds": [{"exercise": "Hamstring Bridge", "done": false}, {"exercise": "Hamstring Bridge", "done": false}, {"exercise": "Hamstring Bridge", "done": false}]}, {"muscle": "Core", "rounds": [{"exercise": "Ball Crunch", "done": false}, {"exercise": "Ball Crunch", "done": false}, {"exercise": "Ball Crunch", "done": false}]}]}], "workoutMode": "3day", "workoutsAlt": [{"id": "combo1", "name": "Combo Day 1", "category": "Push + Quads/Hamstrings", "rounds": 4, "slots": [{"muscle": "Quads", "rounds": [{"exercise": "Quad Sit Back", "done": false}, {"exercise": "Quad Sit Back", "done": false}, {"exercise": "Quad Sit Back", "done": false}, {"exercise": "Quad Sit Back", "done": false}]}, {"muscle": "Shoulders", "rounds": [{"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}, {"exercise": "Narrow Press", "done": false}]}, {"muscle": "Hamstrings", "rounds": [{"exercise": "Kneeling Hamstring Curl", "done": false}, {"exercise": "Kneeling Hamstring Curl", "done": false}, {"exercise": "Kneeling Hamstring Curl", "done": false}, {"exercise": "Kneeling Hamstring Curl", "done": false}]}, {"muscle": "Chest", "rounds": [{"exercise": "Chest Press", "done": false}, {"exercise": "Chest Press", "done": false}, {"exercise": "Chest Press", "done": false}, {"exercise": "Chest Press", "done": false}]}, {"muscle": "Triceps", "rounds": [{"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}, {"exercise": "Skull Crusher", "done": false}]}]}, {"id": "combo2", "name": "Combo Day 2", "category": "Pull + Glutes/Core", "rounds": 4, "slots": [{"muscle": "Glutes", "rounds": [{"exercise": "Bent Knee Hip Abduction", "done": false}, {"exercise": "Bent Knee Hip Abduction", "done": false}, {"exercise": "Bent Knee Hip Abduction", "done": false}, {"exercise": "Bent Knee Hip Abduction", "done": false}]}, {"muscle": "Back", "rounds": [{"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}, {"exercise": "Kickstand Row", "done": false}]}, {"muscle": "Core", "rounds": [{"exercise": "Side Plank", "done": false}, {"exercise": "Side Plank", "done": false}, {"exercise": "Side Plank", "done": false}, {"exercise": "Side Plank", "done": false}]}, {"muscle": "Biceps", "rounds": [{"exercise": "Hammer Curl", "done": false}, {"exercise": "Hammer Curl", "done": false}, {"exercise": "Hammer Curl", "done": false}, {"exercise": "Hammer Curl", "done": false}]}]}]};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -183,6 +206,7 @@ let currentDayId = localStorage.pwlcDay || "day1";
 let selectedRound = Number(localStorage.pwlcRound || 0);
 let swap = null;
 let timer = null;
+let sortableInstance = null;
 
 const $ = id => document.getElementById(id);
 
@@ -201,6 +225,7 @@ function ensureWeek() {
     data.weeklyProgress = {weekKey:wk,completed:{}};
     data.cardio = {weekKey:wk,lowMinutes:0,high:{one:false,two:false}};
     data.workouts.forEach(d => d.slots.forEach(s => s.rounds.forEach(r => r.done = false)));
+    (data.workoutsAlt||[]).forEach(d => d.slots.forEach(s => s.rounds.forEach(r => r.done = false)));
     save();
   }
   data.cardio = data.cardio || {weekKey:wk,lowMinutes:0,high:{one:false,two:false}};
@@ -217,6 +242,8 @@ async function load() {
     data.lowCardioTarget = DEFAULT.lowCardioTarget;
     data.lastWeights = {...DEFAULT.lastWeights, ...(data.lastWeights || {})};
     data.lastReps = {...(DEFAULT.lastReps || {}), ...(data.lastReps || {})};
+    if (data.workoutMode == null) data.workoutMode = "3day";
+    if (!data.workoutsAlt) data.workoutsAlt = structuredClone(DEFAULT.workoutsAlt);
   } else {
     data = structuredClone(DEFAULT);
     await setDoc(ref,data);
@@ -233,43 +260,83 @@ function save() {
     await setDoc(doc(db,"users",uid,"app","state"),data);
   }, 250);
 }
-function day() { return data.workouts.find(w => w.id === currentDayId) || data.workouts[0]; }
+function activeWorkouts() { return data.workoutMode === "2day" ? (data.workoutsAlt || []) : data.workouts; }
+function day() { return activeWorkouts().find(w => w.id === currentDayId) || activeWorkouts()[0]; }
 function type(m) { return data.groupType[m] || "Legs"; }
 function cls(m) { let t = type(m); return t==="Legs"?"legs":t==="Glutes"?"glutes":t==="Back"?"back":t==="Chest"?"chest":t==="Shoulders & Arms"?"shoulders":"core"; }
 function wt(e) { return (data.lastWeights || {})[e] || ""; }
 function reps(e) { return (data.lastReps || {})[e] || ""; }
 function ckey(d,s,r) { return `${d}|${s}|${r}`; }
+function setWt(i,r) { let d=day(), sv=(data.setValues||{})[ckey(d.id,i,r)]; return (sv && sv.weight != null && sv.weight !== "") ? sv.weight : wt(d.slots[i].rounds[r].exercise); }
+function setReps(i,r) { let d=day(), sv=(data.setValues||{})[ckey(d.id,i,r)]; return (sv && sv.reps != null && sv.reps !== "") ? sv.reps : reps(d.slots[i].rounds[r].exercise); }
 function roundComplete(d,r) { return d.slots.every(s => s.rounds[r].done); }
 
 function render() { ensureWeek(); renderTabs(); renderWorkout(); renderVolume(); renderCardio(); renderLog(); }
 
 function renderTabs() {
-  $("tabs").innerHTML = data.workouts.map(w => `<button class="${w.id===currentDayId?'active':''}" data-day="${w.id}">${w.name}</button>`).join("");
+  $("modeToggle").innerHTML = `<button class="small ${data.workoutMode!=='2day'?'active':''}" data-mode="3day">3-day week</button><button class="small ${data.workoutMode==='2day'?'active':''}" data-mode="2day">2-day week</button>`;
+  document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
+    data.workoutMode = b.dataset.mode;
+    currentDayId = activeWorkouts()[0].id;
+    selectedRound = 0;
+    save(); render();
+  });
+  $("tabs").innerHTML = activeWorkouts().map(w => `<button class="${w.id===currentDayId?'active':''}" data-day="${w.id}">${w.name}</button>`).join("");
   document.querySelectorAll("[data-day]").forEach(b => b.onclick = () => { currentDayId=b.dataset.day; selectedRound=0; save(); render(); });
 }
 function renderWorkout() {
   let d = day();
+  if (selectedRound > d.rounds - 1) selectedRound = 0;
   $("dayTitle").textContent = d.name;
+  $("dayCategory").textContent = d.category || "";
+  $("dayCategory").classList.toggle("hidden", !d.category);
   $("dayMeta").textContent = `${d.slots.length} exercises · ${d.rounds} rounds · one circuit`;
-  $("roundNav").innerHTML = [0,1,2].map(i => `<button class="round-pill ${i===selectedRound?'active':''} ${roundComplete(d,i)?'complete':''}" data-r="${i}">${roundComplete(d,i)?'✓ ':''}Round ${i+1}</button>`).join("");
+  $("roundNav").innerHTML = Array.from({length:d.rounds},(_,i)=>i).map(i => `<button class="round-pill ${i===selectedRound?'active':''} ${roundComplete(d,i)?'complete':''}" data-r="${i}">${roundComplete(d,i)?'✓ ':''}Round ${i+1}</button>`).join("");
   document.querySelectorAll("[data-r]").forEach(b => b.onclick = () => { selectedRound=Number(b.dataset.r); save(); render(); });
   $("roundCheckBtn").textContent = roundComplete(d,selectedRound) ? "Uncheck whole round" : "Check whole round";
   $("exerciseGrid").innerHTML = d.slots.map((s,i) => {
     let r = s.rounds[selectedRound], k = cls(s.muscle);
     return `<article class="tile ${k}">
-      <div class="tile-head"><div><span class="badge ${k}">${type(s.muscle)}</span><div class="muscle">${s.muscle} · Round ${selectedRound+1}</div></div><button class="small" data-swap="${i}">Swap</button></div>
+      <div class="tile-head"><div><span class="badge ${k}">${type(s.muscle)}</span><div class="muscle">${s.muscle} · Round ${selectedRound+1}</div></div><div style="display:flex;gap:6px;align-items:center"><span class="drag-handle" title="Drag to reorder">⠿</span><button class="small" data-swap="${i}">Swap</button></div></div>
       <div class="current-exercise">${r.exercise}</div>
       <div class="input-row">
-        <input value="${wt(r.exercise)}" placeholder="Weight lbs" data-weight="${r.exercise}">
-        <input value="${reps(r.exercise)}" placeholder="Reps" inputmode="numeric" data-reps="${r.exercise}">
+        <input value="${setWt(i,selectedRound)}" placeholder="Weight lbs" data-weight-slot="${i}">
+        <input value="${setReps(i,selectedRound)}" placeholder="Reps" inputmode="numeric" data-reps-slot="${i}">
       </div>
       <div class="tile-actions"><button class="small ${r.done?'done':''}" data-done="${i}">${r.done?'Done ✓':'Done'}</button></div>
     </article>`;
   }).join("");
-  document.querySelectorAll("[data-weight]").forEach(x => x.onchange = () => { data.lastWeights = data.lastWeights || {}; data.lastWeights[x.dataset.weight] = x.value; save(); renderOptions(); });
-  document.querySelectorAll("[data-reps]").forEach(x => x.onchange = () => { data.lastReps = data.lastReps || {}; data.lastReps[x.dataset.reps] = x.value; save(); renderOptions(); });
+  document.querySelectorAll("[data-weight-slot]").forEach(x => x.onchange = () => {
+    let i = Number(x.dataset.weightSlot), dd = day(), ex = dd.slots[i].rounds[selectedRound].exercise, key = ckey(dd.id,i,selectedRound);
+    data.setValues = data.setValues || {};
+    data.setValues[key] = {...(data.setValues[key]||{}), weight: x.value};
+    data.lastWeights = data.lastWeights || {};
+    data.lastWeights[ex] = x.value;
+    save(); renderOptions();
+  });
+  document.querySelectorAll("[data-reps-slot]").forEach(x => x.onchange = () => {
+    let i = Number(x.dataset.repsSlot), dd = day(), ex = dd.slots[i].rounds[selectedRound].exercise, key = ckey(dd.id,i,selectedRound);
+    data.setValues = data.setValues || {};
+    data.setValues[key] = {...(data.setValues[key]||{}), reps: x.value};
+    data.lastReps = data.lastReps || {};
+    data.lastReps[ex] = x.value;
+    save(); renderOptions();
+  });
   document.querySelectorAll("[data-done]").forEach(b => b.onclick = () => toggleDone(Number(b.dataset.done)));
   document.querySelectorAll("[data-swap]").forEach(b => b.onclick = () => openSwap(Number(b.dataset.swap)));
+  if (sortableInstance) sortableInstance.destroy();
+  if (window.Sortable) {
+    sortableInstance = Sortable.create($("exerciseGrid"), {
+      handle: ".drag-handle",
+      animation: 150,
+      onEnd: evt => {
+        let d = day();
+        let [moved] = d.slots.splice(evt.oldIndex, 1);
+        d.slots.splice(evt.newIndex, 0, moved);
+        save(); render();
+      }
+    });
+  }
 }
 function toggleDone(i) {
   let d = day(), r = d.slots[i].rounds[selectedRound];
@@ -309,7 +376,7 @@ function renderOptions() {
 }
 function renderVolume() {
   let order = ["Quads","Glutes","Hamstrings","Back","Chest","Shoulders","Biceps","Triceps","Core"], counts = {};
-  data.workouts.forEach(d => d.slots.forEach((s,i) => s.rounds.forEach((r,j) => { if (data.weeklyProgress.completed[ckey(d.id,i,j)]) counts[s.muscle] = (counts[s.muscle] || 0) + 1; })));
+  activeWorkouts().forEach(d => d.slots.forEach((s,i) => s.rounds.forEach((r,j) => { if (data.weeklyProgress.completed[ckey(d.id,i,j)]) counts[s.muscle] = (counts[s.muscle] || 0) + 1; })));
   $("weekLabel").textContent = `Week starting Monday ${data.weeklyProgress.weekKey}`;
   $("volume").innerHTML = order.map(m => { let v = counts[m] || 0, k = cls(m); return `<div class="volume-row"><span>${m}</span><div class="bar"><div class="fill ${k}" style="width:${Math.min(100,v/6*100)}%"></div></div><span>${v}/6</span></div>`; }).join("");
 }
@@ -318,6 +385,7 @@ window.resetWeekProgress = () => {
   data.weeklyProgress = {weekKey:monday(),completed:{}};
   data.cardio = {weekKey:monday(),lowMinutes:0,high:{one:false,two:false}};
   data.workouts.forEach(d => d.slots.forEach(s => s.rounds.forEach(r => r.done = false)));
+  (data.workoutsAlt||[]).forEach(d => d.slots.forEach(s => s.rounds.forEach(r => r.done = false)));
   save(); render();
 };
 window.addLowCardio = m => { data.cardio.lowMinutes = Math.max(0,(Number(data.cardio.lowMinutes)||0)+m); save(); renderCardio(); };
@@ -333,7 +401,7 @@ function renderCardio() {
 window.logWorkout = () => {
   let d = day();
   data.logs = data.logs || [];
-  data.logs.unshift({date:new Date().toLocaleDateString(),workout:d.name,items:d.slots.map(s => `${s.muscle}: ` + s.rounds.map((r,i) => `R${i+1}: ${r.exercise}${r.done?' ✓':''}${wt(r.exercise)?' '+wt(r.exercise)+'lbs':''}${reps(r.exercise)?' x'+reps(r.exercise):''}`).join(", "))});
+  data.logs.unshift({date:new Date().toLocaleDateString(),workout:d.name,items:d.slots.map((s,si) => `${s.muscle}: ` + s.rounds.map((r,ri) => `R${ri+1}: ${r.exercise}${r.done?' ✓':''}${setWt(si,ri)?' '+setWt(si,ri)+'lbs':''}${setReps(si,ri)?' x'+setReps(si,ri):''}`).join(", "))});
   data.logs = data.logs.slice(0,50);
   save(); renderLog(); alert("Workout logged!");
 };
